@@ -1,91 +1,88 @@
 import torch
 from torch.utils.data import DataLoader
 from utils.dataset import QaTa
+import utils.config as config
 from torch.optim import lr_scheduler
-from utils.wrapper import MedCLIPSegWrapper
+from engine.wrapper import LanGuideMedSegWrapper
 
 import pytorch_lightning as pl    
 from torchmetrics import Accuracy,Dice
 from torchmetrics.classification import BinaryJaccardIndex
 from pytorch_lightning.callbacks import ModelCheckpoint,EarlyStopping
-import os
 
 import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
+import argparse
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '13'
 
-batch_size = 32
-lr = 3e-4
-print("batchsize:",batch_size)
-print("lr:",lr)
-print("no data augment")
+def get_parser():
+    parser = argparse.ArgumentParser(
+        description='Language-guide Medical Image Segmentation')
+    parser.add_argument('--config',
+                        default='./config/training.yaml',
+                        type=str,
+                        help='config file')
 
-BIO_BERT_TYPE = '/dssg/home/ai2010812935/zhongyi/code/lib/Bio_ClinicalBERT'
-CXR_BERT_TYPE = "/dssg/home/ai2010812935/zhongyi/code/lib/BiomedVLP-CXR-BERT-specialized"
-SWIN_TYPE = '/dssg/home/ai2010812935/zhongyi/code/lib/swin-tiny-patch4-window7-224'
-RES_TYPE = '/dssg/home/ai2010812935/zhongyi/code/lib/resnet-50'
-CONV_TYPE = '/dssg/home/ai2010812935/zhongyi/code/lib/convnext-tiny-224'
+    args = parser.parse_args()
+    assert args.config is not None
+    cfg = config.load_cfg_from_cfg_file(args.config)
+    if args.opts is not None:
+        cfg = config.merge_cfg_from_list(cfg, args.opts)
+    return cfg
 
 
 if __name__ == '__main__':
 
+    args = get_parser()
     print("cuda:",torch.cuda.is_available())
 
-    old = '/dssg/home/ai2010812935/zhongyi/data/QaTa-COV19-v2/washed_prompt/Train_text_for_Covid19_washed_changed.csv'
-    new = '/dssg/home/ai2010812935/zhongyi/data/QaTa-COV19-v2/stage_prompt/train_text_stage3_64.csv'
-
-    ds_train = QaTa(csv_path=old,
-                    root_path='/dssg/home/ai2010812935/zhongyi/data/QaTa-COV19-v2/Train',
+    ds_train = QaTa(csv_path=args.train_csv_path,
+                    root_path=args.train_root_path,
+                    tokenizer=args.bert_type,
+                    image_size=args.image_size,
                     mode='train')
 
-    ds_valid = QaTa(csv_path=old,
-                    root_path='/dssg/home/ai2010812935/zhongyi/data/QaTa-COV19-v2/Train',
+    ds_valid = QaTa(csv_path=args.train_csv_path,
+                    root_path=args.train_root_path,
+                    tokenizer=args.bert_type,
+                    image_size=args.image_size,
                     mode='valid')
 
 
-    dl_train = DataLoader(ds_train, batch_size=batch_size, shuffle=True, num_workers=batch_size*2)
-    dl_valid = DataLoader(ds_valid, batch_size=8, shuffle=False, num_workers=8)
+    dl_train = DataLoader(ds_train, batch_size=args.train_batch_size, shuffle=True, num_workers=args.train_batch_size)
+    dl_valid = DataLoader(ds_valid, batch_size=args.valid_batch_size, shuffle=False, num_workers=args.valid_batch_size)
 
-    model = MedCLIPSegWrapper(CXR_BERT_TYPE, CONV_TYPE, 
+    model = LanGuideMedSegWrapper(args.bert_type, args.vision_type, args.project_dim,
                              metrics_dict = {"acc":Accuracy(),"dice":Dice(),"MIoU":BinaryJaccardIndex()},
-                             lr = lr)
+                             lr = args.lr)
 
-    #1，设置回调函数
+    ## 1. setting recall function
     model_ckpt = ModelCheckpoint(
-        dirpath='/dssg/home/ai2010812935/zhongyi/save_model',
-        filename='convseg',
+        dirpath=args.model_save_path,
+        filename=args.model_save_filename,
         monitor='val_loss',
         save_top_k=1,
-        # save_weights_only=True,
         mode='min',
         verbose=True,
     )
 
     early_stopping = EarlyStopping(monitor = 'val_loss',
-                            patience=20,
+                            patience=args.patience,
                             mode = 'min'
     )
 
-    #2，设置训练参数
+    ## 2. setting trainer
 
-    # gpus=0 则使用cpu训练，gpus=1则使用1个gpu训练，gpus=2则使用2个gpu训练，gpus=-1则使用所有gpu训练，
-    # gpus=[0,1]则指定使用0号和1号gpu训练， gpus="0,1,2,3"则使用0,1,2,3号gpu训练
-    # tpus=1 则使用1个tpu训练
     trainer = pl.Trainer(logger=True,
-                        # precision=16,
-                        # accumulate_grad_batches=4,
-                        min_epochs=20,max_epochs=200,
+                        min_epochs=args.min_epochs,max_epochs=args.max_epochs,
                         accelerator='gpu', 
-                        devices=1,
-                        callbacks = [model_ckpt,early_stopping],
-                        enable_progress_bar =False,
+                        devices=args.device,
+                        callbacks=[model_ckpt,early_stopping],
+                        enable_progress_bar=False,
                         ) 
 
-    ##4，启动训练循环
+    ## 3. start training
     print('start training')
-
     trainer.fit(model,dl_train,dl_valid)
-
     print('done training')
 

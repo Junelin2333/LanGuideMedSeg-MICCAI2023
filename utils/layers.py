@@ -7,27 +7,23 @@ from monai.networks.blocks.unetr_block import UnetrUpBlock
 
 
 class PositionalEncoding(nn.Module):
-    def __init__(self, d_model, dropout=0, max_len=5000):
-        """
-        :param d_model: pe编码维度 一般与word embedding相同 方便相加
-        :param dropout: dorp out
-        :param max_len: 语料库中最长句子的长度 即word embedding中的L
-        """
+
+    def __init__(self, d_model:int, dropout=0, max_len:int=5000) -> None:
+
         super(PositionalEncoding, self).__init__()
-        # 定义drop out
+        
         self.dropout = nn.Dropout(p=dropout)
-        # 计算pe编码
-        pe = torch.zeros(max_len, d_model) # 建立空表，每行代表一个词的位置，每列代表一个编码位
-        position = torch.arange(0, max_len).unsqueeze(1) # 建个arrange表示词的位置以便公式计算，size=(max_len,1)
-        div_term = torch.exp(torch.arange(0, d_model, 2) *    # 计算公式中10000**（2i/d_model)
-                             -(math.log(10000.0) / d_model))
-        pe[:, 0::2] = torch.sin(position * div_term)  # 计算偶数维度的pe值
-        pe[:, 1::2] = torch.cos(position * div_term)  # 计算奇数维度的pe值
-        pe = pe.unsqueeze(0)  # size=(1, L, d_model)，为了后续与word_embedding相加,意为batch维度下的操作相同
-        self.register_buffer('pe', pe)  # pe值是不参加训练的
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len).unsqueeze(1) 
+        div_term = torch.exp(torch.arange(0, d_model, 2) * -(math.log(10000.0) / d_model))
+        pe[:, 0::2] = torch.sin(position * div_term) 
+        pe[:, 1::2] = torch.cos(position * div_term) 
+        pe = pe.unsqueeze(0)  # size=(1, L, d_model)
+        self.register_buffer('pe', pe)  
 
     def forward(self, x):
-        # 输入的最终编码 = word_embedding + positional_embedding
+
+        #  output = word_embedding + positional_embedding
         x = x + nn.Parameter(self.pe[:, :x.size(1)],requires_grad=False) #size = [batch, L, d_model]
         return self.dropout(x) # size = [batch, L, d_model]
 
@@ -35,7 +31,7 @@ class PositionalEncoding(nn.Module):
 
 class GuideDecoderLayer(nn.Module):
 
-    def __init__(self, in_channels, output_text_len, input_text_len=24, embed_dim=768):
+    def __init__(self, in_channels:int, output_text_len:int, input_text_len:int=24, embed_dim:int=768):
 
         super(GuideDecoderLayer, self).__init__()
 
@@ -95,14 +91,12 @@ class GuideDecoder(nn.Module):
         super().__init__()
 
         self.guide_layer = GuideDecoderLayer(in_channels,text_len)   # for skip
-
         self.spatial_size = spatial_size
         self.decoder = UnetrUpBlock(2,in_channels,out_channels,3,2,norm_name='BATCH')
 
     
     def forward(self, vis, skip_vis, txt):
 
-        # skip_vis = self.guide_layer(skip_vis, txt)
         if txt is not None:
             vis =  self.guide_layer(vis, txt)
 
@@ -114,18 +108,4 @@ class GuideDecoder(nn.Module):
 
         return output
 
-
-class BottleNeck(nn.Module):
-
-    def __init__(self,in_channels,text_len,project_dim) -> None:
-        super().__init__()
-
-        self.guide_layer = GuideDecoderLayer(in_channels,text_len,text_len,project_dim)
-
-    
-    def forward(self, vis, txt):
-        
-        vis = self.guide_layer(vis, txt)
-
-        return vis
 

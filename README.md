@@ -1,19 +1,71 @@
 # LanGuideMedSeg-MICCAI2023
-Pytorch code of MICCAI 2023 Paper-Ariadne’s Thread : Using Text Prompts to Improve Segmentation of Infected Areas from Chest X-ray images
+Pytorch code of MICCAI 2023 Paper-**Ariadne’s Thread : Using Text Prompts to Improve Segmentation of Infected Areas from Chest X-ray images**
 
-ArXiv paper: [https://arxiv.org/abs/2307.03942](https://arxiv.org/abs/2307.03942)
+arXiv paper: [https://arxiv.org/abs/2307.03942](https://arxiv.org/abs/2307.03942)
 
-## Preparation
-1. Environment
-Python==3.8
-Pytorch==1.13.1
-pytorch_lightning=1.9.1
-monai
+
+## Framework
+
+![Framework](./misc/1.png)
+
+## Requirements
+1. Environment  
+The main mandatory dependency versions are as follows:  
+    ```
+    python=3.8  
+    torch=1.12.1  
+    torchvision=0.13.1  
+    pytorch_lightning=1.9.0  
+    torchmetrics=0.10.3  
+    transformers=4.24.0  
+    monai=1.0.1  
+    pandas  
+    einops  
+    ```
+
+2. (Option)Download the pretrained model of CXR-BERT and ConvNeXt
+   
+   CXR-BERT-specialized see: https://huggingface.co/microsoft/BiomedVLP-CXR-BERT-specialized/tree/main  
+   ConvNeXt-tiny see: https://huggingface.co/facebook/convnext-tiny-224/tree/main
+
+   Download the file 'pytorch_model.bin' to './lib/BiomedVLP-CXR-BERT-specialized/' and './lib/convnext-tiny-224'
+
+   Or just use these models online:
+   ```
+   url = "microsoft/BiomedVLP-CXR-BERT-specialized"
+   tokenizer = AutoTokenizer.from_pretrained(url,trust_remote_code=True)
+   model = AutoModel.from_pretrained(url, trust_remote_code=True)
+   ```
+   
 
 ## Dataset
-1. QaTa-COV19 Dataset(images & segmentation mask)
-QaTa-COV19 Dataset See Kaggle: [https://www.kaggle.com/datasets/aysendegerli/qatacov19-dataset](https://www.kaggle.com/datasets/aysendegerli/qatacov19-dataset)
+1. QaTa-COV19 Dataset(images & segmentation mask)  
+    QaTa-COV19 Dataset See Kaggle: [https://www.kaggle.com/datasets/aysendegerli/qatacov19-dataset](https://www.kaggle.com/datasets/aysendegerli/qatacov19-dataset)
 
-*We use QaTa-COV19-v2 in our experiments.*
+    **We use QaTa-COV19-v2 in our experiments.**
 
-2. QaTa-COV19 Text Annotations(from thrid party)
+2. QaTa-COV19 Text Annotations(from thrid party)  
+    Check out the related content in LViT: [https://github.com/HUANGLIZI/LViT](https://github.com/HUANGLIZI/LViT)
+
+    **Thanks to Li et al. for their contributions. If you use this dataset, please cite their work.**
+
+## QuickStart
+Our training is implemented based on PyTorch Lightning. Please check the relevant training settings in train.py and config.  
+
+To train a model, please execute:  
+```python train_model.py```
+
+## Citation
+*TODO: Change to MICCAI 2023 Citation*
+
+If you find our work useful in your research, please consider citing:
+```
+@misc{zhong2023ariadnes,
+      title={Ariadne's Thread:Using Text Prompts to Improve Segmentation of Infected Areas from Chest X-ray images}, 
+      author={Yi Zhong and Mengqiu Xu and Kongming Liang and Kaixin Chen and Ming Wu},
+      year={2023},
+      eprint={2307.03942},
+      archivePrefix={arXiv},
+      primaryClass={eess.IV}
+}
+```

@@ -1,4 +1,4 @@
-from model import MedCLIPSeg
+from utils.model import LanGuideMedSeg
 from torch.optim import lr_scheduler
 from monai.losses import DiceCELoss
 import torch
@@ -11,14 +11,14 @@ import sys
 import numpy as np
 import datetime
 
-class MedCLIPSegWrapper(pl.LightningModule):
+class LanGuideMedSegWrapper(pl.LightningModule):
 
-    def __init__(self, bert_type, vision_type, project_dim=512, checkpoint=None,
+    def __init__(self, bert_type, vision_type, project_dim=768,
                 metrics_dict=None, lr=5e-4):
         
-        super(MedCLIPSegWrapper, self).__init__()
+        super(LanGuideMedSegWrapper, self).__init__()
         
-        self.model = MedCLIPSeg(bert_type, vision_type, project_dim, checkpoint)
+        self.model = LanGuideMedSeg(bert_type, vision_type, project_dim)
 
         self.history = {}
 
