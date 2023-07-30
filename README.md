@@ -52,6 +52,8 @@ The main mandatory dependency versions are as follows:
 
 ## QuickStart
 Our training is implemented based on PyTorch Lightning. Please check the relevant training settings in train.py and config.  
+For example:
+```train_csv_path:./data/QaTa-COV19-v2/prompt/train.csv```
 
 To train a model, please execute:  
 ```python train_model.py```
