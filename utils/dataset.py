@@ -62,7 +62,7 @@ class QaTa(Dataset):
 
         return ([image, text], gt)
 
-    def transform(self,image_size):
+    def transform(self,image_size=[224,224]):
 
         if self.mode == 'train':  # for training mode
             trans = Compose([

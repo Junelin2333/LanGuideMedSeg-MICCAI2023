@@ -1,25 +1,28 @@
-train_batch_size: 32
-lr: 0.0003
+TRAIN:
+  train_batch_size: 32
+  lr: 0.0003
 
-valid_batch_size: 8
+  valid_batch_size: 8
 
-image_size: 224
+  image_size: [224,224]
 
-min_epochs: 20
-max_epochs: 100
-patience: 20
+  min_epochs: 20
+  max_epochs: 100
+  patience: 20
 
-device: 1
+  device: 1
 
-model_save_path: ./save_model
-model_save_filename: medseg
+  model_save_path: ./save_model
+  model_save_filename: medseg
 
-bert_type: microsoft/BiomedVLP-CXR-BERT-specialized
-vision_type: facebook/convnext-tiny-224
-project_dim: 768
+MODEL:
+  bert_type: microsoft/BiomedVLP-CXR-BERT-specialized
+  vision_type: facebook/convnext-tiny-224
+  project_dim: 768
 
-train_csv_path: ./data/QaTa-COV19-v2/prompt/train.csv
-train_root_path: ./data/QaTa-COV19-v2/Train
+DATA:
+  train_csv_path: ./data/QaTa-COV19-v2/prompt/train.csv
+  train_root_path: ./data/QaTa-COV19-v2/Train
 
-test_csv_path: ./data/QaTa-COV19-v2/prompt/test.csv
-test_root_path: ./data/QaTa-COV19-v2/Test
+  test_csv_path: ./data/QaTa-COV19-v2/prompt/test.csv
+  test_root_path: ./data/QaTa-COV19-v2/Test
