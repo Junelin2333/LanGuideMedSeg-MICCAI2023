@@ -61,8 +61,8 @@ To evaluate a model, please excute:
 ```python evaluate.py```
 
 ## Result explain
-Some of you have expressed doubts about the results in Table 1, which are different from the std out on the results screen during training.  
-Please note: The results in *Table 1* were obtained on the QaTa-COV19 **test set**. Please run evaluate.py to obtain the results on the test set instead of referring to the std out on the screen during training, while those results were obtained on the validation set!
+Some of you have expressed doubts about the results in *Table 1*, which are different from the std out on the results screen during training.  
+Please note: The results in *Table 1* were obtained on the QaTa-COV19 **test set**. Please run ```evaluate.py``` to obtain the results on the test set instead of referring to the std out on the screen during training, while those results were obtained on the validation set!
 
 ![Table](./misc/2.png)
 
