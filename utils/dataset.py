@@ -2,7 +2,7 @@ import json
 import os
 import torch
 import pandas as pd
-from monai.transforms import (AddChanneld, Compose, Lambdad, HistogramNormalized,RandCoarseShuffled,RandRotated,RandZoomd,
+from monai.transforms import (AddChanneld, Compose, Lambdad, NormalizeIntensityd,RandCoarseShuffled,RandRotated,RandZoomd,
                               Resized, ToTensord, LoadImaged, EnsureChannelFirstd)
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoTokenizer
@@ -71,7 +71,7 @@ class QaTa(Dataset):
                 RandZoomd(['image','gt'],min_zoom=0.95,max_zoom=1.2,mode=["bicubic","nearest"],prob=0.1),
                 Resized(["image"],spatial_size=image_size,mode='bicubic'),
                 Resized(["gt"],spatial_size=image_size,mode='nearest'),
-                HistogramNormalized(['image']),
+                NormalizeIntensityd(['image'], channel_wise=True),
                 ToTensord(["image","gt","token","mask"]),
             ])
         
@@ -81,7 +81,7 @@ class QaTa(Dataset):
                 EnsureChannelFirstd(["image","gt"]),
                 Resized(["image"],spatial_size=image_size,mode='bicubic'),
                 Resized(["gt"],spatial_size=image_size,mode='nearest'),
-                HistogramNormalized(['image']),
+                NormalizeIntensityd(['image'], channel_wise=True),
                 ToTensord(["image","gt","token","mask"]),
 
             ])

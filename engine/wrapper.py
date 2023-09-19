@@ -1,9 +1,9 @@
 from utils.model import LanGuideMedSeg
-from torch.optim import lr_scheduler
 from monai.losses import DiceCELoss
+from torchmetrics import Accuracy,Dice
+from torchmetrics.classification import BinaryJaccardIndex
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import pytorch_lightning as pl
 from copy import deepcopy
 import pandas as pd
@@ -13,17 +13,17 @@ import datetime
 
 class LanGuideMedSegWrapper(pl.LightningModule):
 
-    def __init__(self, bert_type, vision_type, project_dim=768,
-                metrics_dict=None, lr=5e-4):
+    def __init__(self, args):
         
         super(LanGuideMedSegWrapper, self).__init__()
         
-        self.model = LanGuideMedSeg(bert_type, vision_type, project_dim)
-
+        self.model = LanGuideMedSeg(args.bert_type, args.vision_type, args.project_dim)
+        self.lr = args.lr
         self.history = {}
-
-        self.loss_fn = DiceCELoss()
         
+        self.loss_fn = DiceCELoss()
+
+        metrics_dict = {"acc":Accuracy(task='binary'),"dice":Dice(),"MIoU":BinaryJaccardIndex()}
         self.train_metrics = nn.ModuleDict(metrics_dict)
         self.val_metrics = deepcopy(self.train_metrics)
         self.test_metrics = deepcopy(self.train_metrics)

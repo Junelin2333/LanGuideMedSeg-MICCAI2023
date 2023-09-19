@@ -51,9 +51,7 @@ if __name__ == '__main__':
     dl_train = DataLoader(ds_train, batch_size=args.train_batch_size, shuffle=True, num_workers=args.train_batch_size)
     dl_valid = DataLoader(ds_valid, batch_size=args.valid_batch_size, shuffle=False, num_workers=args.valid_batch_size)
 
-    model = LanGuideMedSegWrapper(args.bert_type, args.vision_type, args.project_dim,
-                             metrics_dict = {"acc":Accuracy(),"dice":Dice(),"MIoU":BinaryJaccardIndex()},
-                             lr = args.lr)
+    model = LanGuideMedSegWrapper(args)
 
     ## 1. setting recall function
     model_ckpt = ModelCheckpoint(
