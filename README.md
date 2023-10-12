@@ -4,6 +4,8 @@ Pytorch code of MICCAI 2023 Paper-**Ariadne’s Thread : Using Text Prompts to I
 
 arXiv paper: [https://arxiv.org/abs/2307.03942](https://arxiv.org/abs/2307.03942)
 
+MICCAI 2023 Conference paper: [https://link.springer.com/chapter/10.1007/978-3-031-43901-8_69](https://link.springer.com/chapter/10.1007/978-3-031-43901-8_69)
+
 
 ## Framework
 
