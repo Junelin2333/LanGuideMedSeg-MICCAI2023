@@ -67,16 +67,15 @@ Please note: The results in *Table 1* were obtained on the QaTa-COV19 **test set
 ![Table](./misc/2.png)
 
 ## Citation
-*TODO: Change to MICCAI 2023 Citation*
 
 If you find our work useful in your research, please consider citing:
 ```
-@misc{zhong2023ariadnes,
-      title={Ariadne's Thread:Using Text Prompts to Improve Segmentation of Infected Areas from Chest X-ray images}, 
-      author={Yi Zhong and Mengqiu Xu and Kongming Liang and Kaixin Chen and Ming Wu},
-      year={2023},
-      eprint={2307.03942},
-      archivePrefix={arXiv},
-      primaryClass={eess.IV}
+@inproceedings{zhong2023ariadne,
+  title={Ariadne’s Thread: Using Text Prompts to Improve Segmentation of Infected Areas from Chest X-ray Images},
+  author={Zhong, Yi and Xu, Mengqiu and Liang, Kongming and Chen, Kaixin and Wu, Ming},
+  booktitle={International Conference on Medical Image Computing and Computer-Assisted Intervention},
+  pages={724--733},
+  year={2023},
+  organization={Springer}
 }
 ```
