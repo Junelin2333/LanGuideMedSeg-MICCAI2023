@@ -56,7 +56,7 @@ class GuideDecoderLayer(nn.Module):
         self.norm1 = nn.LayerNorm(in_channels)
         self.norm2 = nn.LayerNorm(in_channels)
 
-        self.scale = nn.Parameter(torch.tensor(0.01),requires_grad=True)
+        self.scale = nn.Parameter(torch.tensor(1.421),requires_grad=True)
 
 
     def forward(self,x,txt):
