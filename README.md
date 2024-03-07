@@ -31,7 +31,7 @@ The main mandatory dependency versions are as follows:
    CXR-BERT-specialized see: https://huggingface.co/microsoft/BiomedVLP-CXR-BERT-specialized/tree/main  
    ConvNeXt-tiny see: https://huggingface.co/facebook/convnext-tiny-224/tree/main
 
-   Download the file 'pytorch_model.bin' to './lib/BiomedVLP-CXR-BERT-specialized/' and './lib/convnext-tiny-224'
+   Download the file 'pytorch_model.bin' to './lib/BiomedVLP-CXR-BERT-specialized/' and './lib/convnext-tiny-224'  
    If you want to use local model, just change the `bert_type` and `vision_type` in `/config/training.yaml` to local filefold path.
    ```
    ...
