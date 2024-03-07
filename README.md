@@ -32,11 +32,13 @@ The main mandatory dependency versions are as follows:
    ConvNeXt-tiny see: https://huggingface.co/facebook/convnext-tiny-224/tree/main
 
    Download the file 'pytorch_model.bin' to './lib/BiomedVLP-CXR-BERT-specialized/' and './lib/convnext-tiny-224'
-   Then load local model like this: 
+   If you want to use local model, just change the `bert_type` and `vision_type` in `/config/training.yaml` to local filefold path.
    ```
-   model_path = "./lib/BiomedVLP-CXR-BERT-specialized"
-   tokenizer = AutoTokenizer.from_pretrained(model_path)
-   model = AutoModel.from_pretrained(model_path)
+   ...
+   MODEL:
+     bert_type: ./lib/BiomedVLP-CXR-BERT-specialized
+     vision_type: ./lib/convnext-tiny-224
+   ...
    ```
    
    Or just use these models online:
